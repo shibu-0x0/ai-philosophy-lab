@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="ja">
+ <head><script>window["__codeletBootstrap__"]=JSON.parse('{"A":"A","B":"20260722-05-f3252b3"}');</script><script src="/_sdk/e358eac22bd01364.telemetry_sdk.js" integrity="sha512-KPxp3rw4K8Nu9ceWJc3gyM7srgaZxiFWOVbyu260EYzzAqdz10mfo5xyXrCx+wEKtGo77JbtmwXvFLbwrGzwvw=="></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>業務管理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet">
+  <style>
+  :root{
+    --paper:#F7F5EF;
+    --panel:#FFFFFF;
+    --ink:#202A36;
+    --ink-soft:#6B7280;
+    --rule:#D9D4C6;
+    --gold:#B8902E;
+    --teal:#2F6F5E;
+    --red:#B23A48;
+    --navy:#16212C;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Zen Kaku Gothic New', sans-serif;
+    line-height:1.7;
+    padding:32px 20px 80px;
+  }
+  .page{max-width:980px;margin:0 auto;}
+
+  /* ── Header ── */
+  header.masthead{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+    background:var(--navy);
+    padding:20px 28px;
+    margin-bottom:28px;
+    border-radius:4px;
+  }
+  .masthead .eyebrow{font-size:11px;color:#7A8FA0;letter-spacing:.16em;margin-bottom:5px;}
+  .masthead h1{
+    font-family:'Shippori Mincho',serif;font-weight:600;font-size:24px;margin:0;
+    color:#FFFFFF;letter-spacing:.04em;
+  }
+  .masthead .badge{
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold);
+    border:1px solid var(--gold);padding:6px 14px;letter-spacing:.05em;white-space:nowrap;
+    border-radius:2px;
+  }
+
+  /* ── KPI cards ── */
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+  .kpi-card{
+    background:var(--panel);border:1px solid var(--rule);border-radius:6px;
+    padding:20px 22px;position:relative;overflow:hidden;
+  }
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--gold);}
+  .kpi-card.teal::before{background:var(--teal);}
+  .kpi-card.red::before{background:var(--red);}
+  .kpi-card.navy::before{background:var(--navy);}
+  .kpi-icon{font-size:22px;margin-bottom:8px;display:block;}
+  .kpi-label{font-size:12px;color:var(--ink-soft);margin-bottom:4px;font-weight:500;}
+  .kpi-value{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .kpi-sub{font-size:12px;color:var(--teal);margin-top:4px;font-family:'JetBrains Mono',monospace;}
+  .kpi-sub.neg{color:var(--red);}
+
+  /* ── Period bar ── */
+  .period-bar{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    background:var(--panel);border:1px solid var(--rule);border-radius:6px;
+    padding:14px 20px;margin-bottom:28px;
+  }
+  .period-bar .period-label{font-size:13px;color:var(--ink-soft);}
+  .period-bar .period-value{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:600;color:var(--ink);}
+  .period-bar .hint{font-size:12px;color:var(--ink-soft);background:rgba(0,0,0,.04);padding:4px 12px;border-radius:20px;}
+
+  /* ── Guide box ── */
+  .guide-box{
+    background:rgba(47,111,94,.07);border:1px solid rgba(47,111,94,.25);border-radius:6px;
+    padding:14px 20px;margin-bottom:28px;font-size:13px;color:var(--teal);
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .guide-box .guide-icon{font-size:18px;flex:none;margin-top:1px;}
+
+  /* ── Ledger ── */
+  .ledger{background:var(--panel);border:1px solid var(--rule);border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+
+  .tab-bar{display:grid;grid-template-columns:repeat(4,1fr);background:var(--navy);gap:0;}
+  .tab-bar label{
+    text-align:center;padding:16px 8px 14px;
+    font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;color:#8EA0B0;
+    cursor:pointer;border-right:1px solid rgba(255,255,255,.08);
+    transition:background .15s,color .15s;
+    display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.3;
+  }
+  .tab-bar label:last-child{border-right:none;}
+  .tab-bar label .tab-icon{font-size:20px;}
+  .tab-bar label .tab-count{font-size:11px;font-family:'JetBrains Mono',monospace;opacity:.7;}
+
+  input[type=radio]{display:none;}
+  input[type=checkbox]{display:none;}
+
+  #tab-order:checked ~ .tab-bar label[for=tab-order],
+  #tab-purchase:checked ~ .tab-bar label[for=tab-purchase],
+  #tab-income:checked ~ .tab-bar label[for=tab-income],
+  #tab-expense:checked ~ .tab-bar label[for=tab-expense]{
+    color:#FFFFFF;background:rgba(255,255,255,.1);border-bottom:3px solid var(--gold);
+  }
+
+  .panels{padding:24px 24px 28px;}
+  .panel{display:none;}
+  #tab-order:checked ~ .panels #panel-order,
+  #tab-purchase:checked ~ .panels #panel-purchase,
+  #tab-income:checked ~ .panels #panel-income,
+  #tab-expense:checked ~ .panels #panel-expense{display:block;}
+
+  .panel-head{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:18px;flex-wrap:wrap;gap:12px;
+    padding-bottom:14px;border-bottom:2px solid var(--rule);
+  }
+  .panel-head-left{}
+  .panel-head h2{font-family:'Shippori Mincho',serif;font-size:18px;margin:0 0 2px;}
+  .panel-head .panel-desc{font-size:12px;color:var(--ink-soft);}
+
+  /* ── Buttons ── */
+  .btn{
+    font-family:'Zen Kaku Gothic New',sans-serif;font-size:14px;font-weight:500;
+    padding:11px 20px;border-radius:5px;border:none;
+    background:var(--teal);color:#FFFFFF;
+    cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  }
+  .btn .btn-icon{font-size:16px;}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule);}
+  .btn.ghost:hover{background:var(--paper);}
+  .btn.small{padding:7px 14px;font-size:12.5px;}
+  .btn.danger-ghost{background:transparent;color:var(--red);border:1px solid rgba(178,58,72,.3);}
+
+  /* ── Table ── */
+  .table-scroll{overflow-x:auto;border-radius:4px;border:1px solid var(--rule);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:540px;}
+  thead th{
+    text-align:left;font-weight:600;color:var(--ink-soft);
+    background:#F9F8F5;
+    border-bottom:1px solid var(--rule);padding:10px 14px;font-size:12px;letter-spacing:.04em;white-space:nowrap;
+  }
+  tbody td{padding:13px 14px;border-bottom:1px solid var(--rule);white-space:nowrap;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#FAFAF6;}
+  td.num{font-family:'JetBrains Mono',monospace;text-align:right;font-variant-numeric:tabular-nums;font-size:14px;}
+  td.id{font-family:'JetBrains Mono',monospace;color:var(--ink-soft);font-size:12px;}
+
+  .status{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:4px 11px;border-radius:20px;font-size:12px;font-weight:500;
+  }
+  .status::before{content:'';width:7px;height:7px;border-radius:50%;flex:none;}
+  .status.done{background:rgba(47,111,94,.12);color:var(--teal);}
+  .status.done::before{background:var(--teal);}
+  .status.wip{background:rgba(184,144,46,.15);color:var(--gold);}
+  .status.wip::before{background:var(--gold);}
+  .status.todo{background:rgba(0,0,0,.06);color:var(--ink-soft);}
+  .status.todo::before{background:var(--ink-soft);}
+
+  .action-cell{display:flex;gap:6px;justify-content:flex-end;}
+
+  /* ── Modal ── */
+  .modal-overlay{
+    display:none;position:fixed;inset:0;background:rgba(20,26,32,.6);
+    align-items:center;justify-content:center;z-index:100;padding:20px;
+  }
+  #modal-order:checked ~ #overlay-order,
+  #modal-purchase:checked ~ #overlay-purchase,
+  #modal-income:checked ~ #overlay-income,
+  #modal-expense:checked ~ #overlay-expense{display:flex;}
+
+  .modal{
+    background:var(--panel);width:100%;max-width:440px;
+    border-radius:8px;overflow:hidden;
+    box-shadow:0 20px 60px rgba(0,0,0,.25);
+  }
+  .modal-header{
+    background:var(--navy);padding:20px 24px 18px;
+    border-bottom:3px solid var(--gold);
+  }
+  .modal-header h3{font-family:'Shippori Mincho',serif;font-size:17px;margin:0 0 4px;color:#FFFFFF;}
+  .modal-header .mock-tag{font-size:11.5px;color:#8EA0B0;display:block;}
+  .modal-body{padding:22px 24px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:6px;font-weight:500;letter-spacing:.03em;}
+  .field .fake-input{
+    border:1px solid var(--rule);padding:11px 13px;font-size:14px;
+    background:var(--paper);color:var(--ink-soft);border-radius:4px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .field .fake-input .fi-icon{font-size:14px;opacity:.6;}
+  .modal-actions{
+    display:flex;flex-direction:column;gap:10px;
+    padding:0 24px 22px;
+  }
+  .modal-note{
+    font-size:12px;color:var(--red);
+    background:rgba(178,58,72,.07);padding:10px 14px;border-radius:4px;
+    border-left:3px solid var(--red);
+    display:flex;align-items:center;gap:6px;
+  }
+  .modal-note .note-icon{font-size:14px;flex:none;}
+
+  /* ── Empty state ── */
+  .empty-state{
+    text-align:center;padding:48px 20px;color:var(--ink-soft);
+    display:none;
+  }
+  .empty-state .es-icon{font-size:40px;margin-bottom:12px;display:block;}
+  .empty-state p{font-size:14px;margin:0;}
+
+  /* ── Footer ── */
+  footer.disclaimer{
+    margin-top:32px;padding:16px 20px;border-top:1px solid var(--rule);
+    font-size:12px;color:var(--ink-soft);text-align:center;line-height:1.8;
+    background:var(--panel);border-radius:6px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width:640px){
+    body{padding:16px 12px 64px;}
+    .tab-bar label{font-size:12px;padding:12px 4px 10px;}
+    .tab-bar label .tab-icon{font-size:18px;}
+    .kpi-value{font-size:22px;}
+    .masthead h1{font-size:20px;}
+    .panels{padding:16px 14px 20px;}
+    .btn{font-size:13px;padding:10px 14px;}
+    .modal-header{padding:16px 18px 14px;}
+    .modal-body{padding:16px 18px;}
+    .modal-actions{padding:0 18px 18px;}
+  }
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/935a53bc2e11fb8d.data_sdk.js" type="text/javascript" integrity="sha512-qr2oyPnEys1WebcOABaRh6hG77r5PWpqeWW6JTKbRJqly/INsfBi31CVNlTmHqjgeLpkVmmHZJUdxSx/32tOFQ=="></script>
+  <script src="/_sdk/7831c9b82769a23f.resizing_sdk.js" type="text/javascript" integrity="sha512-8T/qhF3yB5dtqHof6yvY2492zFsme1nYV1+FuXfYvPz63uo2L30fnKiOabmH0Sl3qhplMLgxjytDR8IvycRwKQ=="></script>
+ </head>
+ <body data-template-id="__page-root">
+  <div class="page">
+   <header class="masthead" data-template-id="masthead" aria-label="ページヘッダー">
+    <div>
+     <div class="eyebrow" data-template-id="masthead-eyebrow">
+      SOLE PROPRIETOR BUSINESS SUITE / デモ環境
+     </div>
+     <h1 data-template-id="masthead-title">屋号サンプル商店　業務管理</h1>
+    </div>
+    <div class="badge" data-template-id="masthead-badge">
+     TIER A ・ 閲覧専用デモ
+    </div>
+   </header><!-- KPIカード -->
+   <div class="kpi-row" role="region" aria-label="現在の状況">
+    <div class="kpi-card" data-template-id="kpi-funds"><span class="kpi-icon">💰</span>
+     <div class="kpi-label" data-template-id="kpi-funds-label">
+      現在の資金
+     </div>
+     <div class="kpi-value" data-template-id="kpi-funds-value">
+      ¥1,284,300
+     </div>
+     <div class="kpi-sub" data-template-id="kpi-funds-sub">
+      先月末比 +¥86,200
+     </div>
+    </div>
+    <div class="kpi-card teal" data-template-id="kpi-orders"><span class="kpi-icon">📋</span>
+     <div class="kpi-label" data-template-id="kpi-orders-label">
+      今月の受注件数
+     </div>
+     <div class="kpi-value" data-template-id="kpi-orders-value">
+      4 件
+     </div>
+     <div class="kpi-sub" data-template-id="kpi-orders-sub">
+      完了 1 ／ 進行中 2
+     </div>
+    </div>
+    <div class="kpi-card red" data-template-id="kpi-unpaid"><span class="kpi-icon">📤</span>
+     <div class="kpi-label" data-template-id="kpi-unpaid-label">
+      未払い仕入
+     </div>
+     <div class="kpi-value" data-template-id="kpi-unpaid-value">
+      ¥147,100
+     </div>
+     <div class="kpi-sub neg" data-template-id="kpi-unpaid-sub">
+      3 件 未処理
+     </div>
+    </div>
+    <div class="kpi-card navy" data-template-id="kpi-period-card"><span class="kpi-icon">📅</span>
+     <div class="kpi-label" data-template-id="kpi-period-label">
+      表示中の期間
+     </div>
+     <div class="kpi-value" style="font-size:18px;" data-template-id="kpi-period-value">
+      2026年7月
+     </div>
+     <div class="kpi-sub" data-template-id="kpi-period-sub">
+      月末時点のデータ
+     </div>
+    </div>
+   </div><!-- 使い方ガイド -->
+   <div class="guide-box" role="note"><span class="guide-icon">💡</span>
+    <div><strong data-template-id="guide-title">使い方ガイド：</strong> <span data-template-id="guide-body">下のタブから「受注・仕入・入金・出金」を切り替えて確認できます。「＋ 新規登録」ボタンで登録画面のイメージをご覧いただけます。</span>
+    </div>
+   </div><!-- 台帳 -->
+   <div class="ledger" role="main"><input type="radio" name="tab" id="tab-order" checked> <input type="radio" name="tab" id="tab-purchase"> <input type="radio" name="tab" id="tab-income"> <input type="radio" name="tab" id="tab-expense">
+    <nav class="tab-bar" aria-label="台帳タブ"><label for="tab-order"> <span class="tab-icon">📋</span> <span data-template-id="tab-label-order">受注</span> <span class="tab-count">4件</span> </label> <label for="tab-purchase"> <span class="tab-icon">🛒</span> <span data-template-id="tab-label-purchase">仕入</span> <span class="tab-count">3件</span> </label> <label for="tab-income"> <span class="tab-icon">📥</span> <span data-template-id="tab-label-income">入金</span> <span class="tab-count">2件</span> </label> <label for="tab-expense"> <span class="tab-icon">📤</span> <span data-template-id="tab-label-expense">出金</span> <span class="tab-count">2件</span> </label>
+    </nav>
+    <div class="panels"><!-- 受注パネル -->
+     <section class="panel" id="panel-order" aria-label="受注一覧">
+      <div class="panel-head">
+       <div class="panel-head-left">
+        <h2 data-template-id="panel-order-title">受注一覧</h2>
+        <p class="panel-desc" data-template-id="panel-order-desc">お客様から受けたご注文の一覧です。状態を確認してください。</p>
+       </div><label for="modal-order" class="btn canva-button"> <span class="btn-icon">＋</span> <span data-template-id="btn-order-new">新規登録</span> </label>
+      </div>
+      <div class="table-scroll">
+       <table>
+        <thead>
+         <tr>
+          <th>受注ID</th>
+          <th>受注日</th>
+          <th>顧客名</th>
+          <th>品目</th>
+          <th>金額</th>
+          <th>納期</th>
+          <th>状態</th>
+          <th style="text-align:right;">操作</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td class="id">S-2607-014</td>
+          <td>07/02</td>
+          <td>〇〇商店</td>
+          <td>什器一式</td>
+          <td class="num">¥320,000</td>
+          <td>07/20</td>
+          <td><span class="status done">完了</span></td>
+          <td>
+           <div class="action-cell">
+            <label class="btn ghost small canva-button">入金する</label>
+           </div></td>
+         </tr>
+         <tr>
+          <td class="id">S-2607-013</td>
+          <td>07/05</td>
+          <td>△△工業</td>
+          <td>部材セット</td>
+          <td class="num">¥184,500</td>
+          <td>07/25</td>
+          <td><span class="status wip">進行中</span></td>
+          <td>
+           <div class="action-cell">
+            <label class="btn ghost small canva-button">入金する</label>
+           </div></td>
+         </tr>
+         <tr>
+          <td class="id">S-2607-011</td>
+          <td>07/09</td>
+          <td>株式会社サンプル</td>
+          <td>備品一式</td>
+          <td class="num">¥96,000</td>
+          <td>08/01</td>
+          <td><span class="status wip">進行中</span></td>
+          <td>
+           <div class="action-cell">
+            <label class="btn ghost small canva-button">入金する</label>
+           </div></td>
+         </tr>
+         <tr>
+          <td class="id">S-2607-008</td>
+          <td>07/12</td>
+          <td>□□商会</td>
+          <td>資材</td>
+          <td class="num">¥55,000</td>
+          <td>07/18</td>
+          <td><span class="status todo">未着手</span></td>
+          <td>
+           <div class="action-cell">
+            <label class="btn ghost small canva-button">入金する</label>
+           </div></td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </section><!-- 仕入パネル -->
+     <section class="panel" id="panel-purchase" aria-label="仕入一覧">
+      <div class="panel-head">
+       <div class="panel-head-left">
+        <h2 data-template-id="panel-purchase-title">仕入一覧</h2>
+        <p class="panel-desc" data-template-id="panel-purchase-desc">仕入れた商品・資材の一覧です。支払いが済んでいるか確認できます。</p>
+       </div><label for="modal-purchase" class="btn canva-button"> <span class="btn-icon">＋</span> <span data-template-id="btn-purchase-new">新規登録</span> </label>
+      </div>
+      <div class="table-scroll">
+       <table>
+        <thead>
+         <tr>
+          <th>仕入ID</th>
+          <th>仕入日</th>
+          <th>仕入先</th>
+          <th>品目</th>
+          <th>金額</th>
+          <th style="text-align:right;">操作</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td class="id">P-2607-021</td>
+          <td>07/03</td>
+          <td>△△資材店</td>
+          <td>木材</td>
+          <td class="num">¥88,000</td>
+          <td>
+           <div class="action-cell">
+            <label class="btn small canva-button" style="background:var(--red);">支払う</label>
+           </div></td>
+         </tr>
+         <tr>
+          <td class="id">P-2607-019</td>
+          <td>07/07</td>
+          <td>○○金物</td>
+          <td>金具一式</td>
+          <td class="num">¥42,300</td>
+          <td>
+           <div class="action-cell">
+            <label class="btn small canva-button" style="background:var(--red);">支払う</label>
+           </div></td>
+         </tr>
+         <tr>
+          <td class="id">P-2607-017</td>
+          <td>07/11</td>
+          <td>サンプル卸</td>
+          <td>塗料</td>
+          <td class="num">¥16,800</td>
+          <td>
+           <div class="action-cell">
+            <label class="btn small canva-button" style="background:var(--red);">支払う</label>
+           </div></td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </section><!-- 入金パネル -->
+     <section class="panel" id="panel-income" aria-label="入金一覧">
+      <div class="panel-head">
+       <div class="panel-head-left">
+        <h2 data-template-id="panel-income-title">入金一覧</h2>
+        <p class="panel-desc" data-template-id="panel-income-desc">お客様からの入金履歴です。</p>
+       </div><label for="modal-income" class="btn canva-button"> <span class="btn-icon">＋</span> <span data-template-id="btn-income-new">新規登録</span> </label>
+      </div>
+      <div class="table-scroll">
+       <table>
+        <thead>
+         <tr>
+          <th>入金ID</th>
+          <th>入金日</th>
+          <th>顧客名</th>
+          <th>対象受注</th>
+          <th>入金額</th>
+          <th>方法</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td class="id">IN-2607-009</td>
+          <td>07/15</td>
+          <td>〇〇商店</td>
+          <td class="id">S-2607-014</td>
+          <td class="num">¥320,000</td>
+          <td>振込</td>
+         </tr>
+         <tr>
+          <td class="id">IN-2607-007</td>
+          <td>07/10</td>
+          <td>□□商会</td>
+          <td class="id">S-2607-006</td>
+          <td class="num">¥40,000</td>
+          <td>現金</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </section><!-- 出金パネル -->
+     <section class="panel" id="panel-expense" aria-label="出金一覧">
+      <div class="panel-head">
+       <div class="panel-head-left">
+        <h2 data-template-id="panel-expense-title">出金一覧</h2>
+        <p class="panel-desc" data-template-id="panel-expense-desc">仕入先への支払い履歴です。</p>
+       </div><label for="modal-expense" class="btn canva-button"> <span class="btn-icon">＋</span> <span data-template-id="btn-expense-new">新規登録</span> </label>
+      </div>
+      <div class="table-scroll">
+       <table>
+        <thead>
+         <tr>
+          <th>出金ID</th>
+          <th>出金日</th>
+          <th>支払先</th>
+          <th>対象仕入</th>
+          <th>出金額</th>
+          <th>方法</th>
+         </tr>
+        </thead>
+        <tbody>
+         <tr>
+          <td class="id">OUT-2607-011</td>
+          <td>07/08</td>
+          <td>△△資材店</td>
+          <td class="id">P-2607-021</td>
+          <td class="num">¥88,000</td>
+          <td>振込</td>
+         </tr>
+         <tr>
+          <td class="id">OUT-2607-010</td>
+          <td>07/04</td>
+          <td>○○金物</td>
+          <td class="id">P-2607-019</td>
+          <td class="num">¥42,300</td>
+          <td>現金</td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </section>
+    </div>
+   </div>
+   <footer class="disclaimer canva-footer"><strong data-template-id="footer-note-title">このページについて：</strong> <span data-template-id="footer-note-body">本ページは操作イメージをお伝えするための静的デモです。表示データはすべてサンプルであり、実際の登録・編集・削除は行われません。入力内容が実際にスプレッドシートへ反映される操作デモは、商談の場で別途ご案内いたします。</span>
+   </footer>
+  </div><!-- モーダル：受注 --> <input type="checkbox" id="modal-order">
+  <div class="modal-overlay" id="overlay-order" role="dialog" aria-modal="true" aria-labelledby="modal-order-title">
+   <div class="modal">
+    <div class="modal-header">
+     <h3 id="modal-order-title" data-template-id="modal-order-title">新規受注登録</h3><span class="mock-tag" data-template-id="modal-order-tag">画面イメージです（このデモでは入力・登録はできません）</span>
+    </div>
+    <div class="modal-body">
+     <div class="field"><label data-template-id="modal-order-f1-label">顧客名</label>
+      <div class="fake-input">
+       <span class="fi-icon">🏪</span> 例）〇〇商店
+      </div>
+     </div>
+     <div class="field"><label data-template-id="modal-order-f2-label">品目・内容</label>
+      <div class="fake-input">
+       <span class="fi-icon">📦</span> 例）什器一式
+      </div>
+     </div>
+     <div class="field"><label data-template-id="modal-order-f3-label">納期</label>
+      <div class="fake-input">
+       <span class="fi-icon">📅</span> 2026-08-01
+      </div>
+     </div>
+    </div>
+    <div class="modal-actions">
+     <div class="modal-note"><span class="note-icon">⚠️</span> <span data-template-id="modal-order-note">実際の登録操作は商談デモでご覧いただけます</span>
+     </div><label for="modal-order" class="btn ghost small canva-button" data-template-id="modal-order-close">✕　閉じる</label>
+    </div>
+   </div>
+  </div><!-- モーダル：仕入 --> <input type="checkbox" id="modal-purchase">
+  <div class="modal-overlay" id="overlay-purchase" role="dialog" aria-modal="true" aria-labelledby="modal-purchase-title">
+   <div class="modal">
+    <div class="modal-header">
+     <h3 id="modal-purchase-title" data-template-id="modal-purchase-title">新規仕入登録</h3><span class="mock-tag" data-template-id="modal-purchase-tag">画面イメージです（このデモでは入力・登録はできません）</span>
+    </div>
+    <div class="modal-body">
+     <div class="field"><label data-template-id="modal-purchase-f1-label">仕入先</label>
+      <div class="fake-input">
+       <span class="fi-icon">🏭</span> 例）△△資材店
+      </div>
+     </div>
+     <div class="field"><label data-template-id="modal-purchase-f2-label">品目</label>
+      <div class="fake-input">
+       <span class="fi-icon">📦</span> 例）木材
+      </div>
+     </div>
+     <div class="field"><label data-template-id="modal-purchase-f3-label">数量 ／ 単価</label>
+      <div class="fake-input">
+       <span class="fi-icon">🔢</span> 10 個　×　¥8,800
+      </div>
+     </div>
+    </div>
+    <div class="modal-actions">
+     <div class="modal-note"><span class="note-icon">⚠️</span> <span data-template-id="modal-purchase-note">実際の登録操作は商談デモでご覧いただけます</span>
+     </div><label for="modal-purchase" class="btn ghost small canva-button" data-template-id="modal-purchase-close">✕　閉じる</label>
+    </div>
+   </div>
+  </div><!-- モーダル：入金 --> <input type="checkbox" id="modal-income">
+  <div class="modal-overlay" id="overlay-income" role="dialog" aria-modal="true" aria-labelledby="modal-income-title">
+   <div class="modal">
+    <div class="modal-header">
+     <h3 id="modal-income-title" data-template-id="modal-income-title">新規入金登録</h3><span class="mock-tag" data-template-id="modal-income-tag">画面イメージです（このデモでは入力・登録はできません）</span>
+    </div>
+    <div class="modal-body">
+     <div class="field"><label data-template-id="modal-income-f1-label">対象受注ID</label>
+      <div class="fake-input">
+       <span class="fi-icon">🔖</span> S-2607-013
+      </div>
+     </div>
+     <div class="field"><label data-template-id="modal-income-f2-label">入金額</label>
+      <div class="fake-input">
+       <span class="fi-icon">💴</span> ¥184,500
+      </div>
+     </div>
+     <div class="field"><label data-template-id="modal-income-f3-label">入金方法</label>
+      <div class="fake-input">
+       <span class="fi-icon">🏦</span> 振込　▾
+      </div>
+     </div>
+    </div>
+    <div class="modal-actions">
+     <div class="modal-note"><span class="note-icon">⚠️</span> <span data-template-id="modal-income-note">実際の登録操作は商談デモでご覧いただけます</span>
+     </div><label for="modal-income" class="btn ghost small canva-button" data-template-id="modal-income-close">✕　閉じる</label>
+    </div>
+   </div>
+  </div><!-- モーダル：出金 --> <input type="checkbox" id="modal-expense">
+  <div class="modal-overlay" id="overlay-expense" role="dialog" aria-modal="true" aria-labelledby="modal-expense-title">
+   <div class="modal">
+    <div class="modal-header">
+     <h3 id="modal-expense-title" data-template-id="modal-expense-title">新規出金登録</h3><span class="mock-tag" data-template-id="modal-expense-tag">画面イメージです（このデモでは入力・登録はできません）</span>
+    </div>
+    <div class="modal-body">
+     <div class="field"><label data-template-id="modal-expense-f1-label">対象仕入ID</label>
+      <div class="fake-input">
+       <span class="fi-icon">🔖</span> P-2607-019
+      </div>
+     </div>
+     <div class="field"><label data-template-id="modal-expense-f2-label">出金額</label>
+      <div class="fake-input">
+       <span class="fi-icon">💴</span> ¥42,300
+      </div>
+     </div>
+     <div class="field"><label data-template-id="modal-expense-f3-label">支払方法</label>
+      <div class="fake-input">
+       <span class="fi-icon">💵</span> 現金　▾
+      </div>
+     </div>
+    </div>
+    <div class="modal-actions">
+     <div class="modal-note"><span class="note-icon">⚠️</span> <span data-template-id="modal-expense-note">実際の登録操作は商談デモでご覧いただけます</span>
+     </div><label for="modal-expense" class="btn ghost small canva-button" data-template-id="modal-expense-close">✕　閉じる</label>
+    </div>
+   </div>
+  </div>
+  <script src="/_sdk/47669dc8496955be.editing_sdk.js" integrity="sha512-SXgqvNdy3CX4R90Kr2d0cSNYZOv6KbcxTq/tprZCtYPHhvtgc5Aagp95xl8W/LNBFpixAlLGqjQW133qbh1QAg=="></script>
+ </body>
+</html>
